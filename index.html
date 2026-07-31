@@ -507,6 +507,7 @@
 
       <div class="md:col-span-2 text-center pt-4">
         <button id="submitBtn" type="submit" class="btn-orange text-white text-sm font-semibold px-10 py-4 rounded-full">문의 보내기</button>
+        <p id="formMessage" class="hidden mt-4 text-sm font-semibold text-ink-base"></p>
       </div>
     </form>
   </div>
@@ -519,15 +520,15 @@
       <div>
         <p class="text-white font-extrabold text-lg mb-3">제온트래블</p>
         <p class="text-white/50 text-sm leading-[1.8]">
-          (주)시너지랩 · 국내외 여행업 등록 법인<br>
+          (주)제온트래블 · 종합여행업 등록법인<br>
           사업자등록번호 415-81-58606 · 관광사업자등록번호 제2026-08호<br>
           제주특별자치도 제주시 노형로 54 201호 · 대표 김현석
         </p>
       </div>
       <div class="text-white/50 text-sm leading-[1.8]">
-        <p>대표전화 010-4482-5775</p>
-        <p>이메일 woojoopartners415@gmail.com</p>
-        <p class="mt-3 text-white/30 text-xs">© 2026 Synergylab Inc. All rights reserved.</p>
+        <p>대표전화 010-6510-1353</p>
+        <p>이메일 rakiboy815@gmail.com</p>
+        <p class="mt-3 text-white/30 text-xs">© 2026 Zeon Travel Inc. All rights reserved.</p>
       </div>
     </div>
   </div>
@@ -578,7 +579,7 @@
     const etc       = val('f-etc');
 
     if (!company || !name || !phone || !email) {
-      showToast('필수 항목(기업명, 담당자명, 연락처, 이메일)을 입력해주세요.', true);
+      showFormMessage('필수 항목(기업명, 담당자명, 연락처, 이메일)을 입력해주세요.', true);
       return false;
     }
 
@@ -602,12 +603,12 @@
 
     emailjs.send('service_8aruaud', 'template_ap6v65k', templateParams)
       .then(() => {
-        showToast('성공적으로 문의가 접수되었습니다. 최대한 빠른 시간 내에 연락드리겠습니다.', false);
+        showFormMessage('성공적으로 문의가 접수되었습니다. 최대한 빠른 시간 내에 연락드리겠습니다.', false);
         document.getElementById('inquiryForm').reset();
       })
       .catch((err) => {
         console.error('EmailJS 전송 실패:', err);
-        showToast('문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.', true);
+        showFormMessage('문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.', true);
       })
       .finally(() => {
         if (btn) { btn.disabled = false; btn.textContent = '문의 보내기'; }
@@ -616,42 +617,13 @@
     return false;
   }
 
-  // 논블로킹 토스트 알림 (alert() 대신 사용, 메인 스레드를 막지 않음)
-  let toastTimer = null;
-  function showToast(message, isError) {
-    let el = document.getElementById('inquiryToast');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'inquiryToast';
-      el.style.position = 'fixed';
-      el.style.left = '50%';
-      el.style.bottom = '32px';
-      el.style.transform = 'translateX(-50%)';
-      el.style.zIndex = '9999';
-      el.style.maxWidth = '90vw';
-      el.style.padding = '14px 20px';
-      el.style.borderRadius = '999px';
-      el.style.fontSize = '14px';
-      el.style.fontWeight = '600';
-      el.style.color = '#fff';
-      el.style.boxShadow = '0 12px 32px rgba(0,0,0,0.25)';
-      el.style.transition = 'opacity .3s ease, transform .3s ease';
-      el.style.opacity = '0';
-      document.body.appendChild(el);
-    }
-    el.style.backgroundColor = isError ? '#A83A16' : '#141110';
+  // 문의 버튼 바로 아래에 표시되는 인라인 메시지 (성공: 검정 텍스트, 오류: 오렌지 계열)
+  function showFormMessage(message, isError) {
+    const el = document.getElementById('formMessage');
+    if (!el) return;
     el.textContent = message;
-
-    requestAnimationFrame(() => {
-      el.style.opacity = '1';
-      el.style.transform = 'translateX(-50%) translateY(-4px)';
-    });
-
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateX(-50%)';
-    }, 4000);
+    el.classList.remove('hidden');
+    el.style.color = isError ? '#A83A16' : '#141110';
   }
 </script>
 
